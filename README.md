@@ -121,7 +121,7 @@ Cookie **wajib** dalam format **STRING**. pada implementasi ini, Actor menggunak
 
 1. Buka **shopee.co.id** di browser dan **login** ke akun kamu
 2. Tekan **F12** / **Ctrl+Shift+I** → buka tab **Network** (Chrome) atau **Storage** (Firefox)
-3. filter **search_item → Request Headers → Cookies →**
+3. filter **search_item → Request Headers → Cookies**
 4. Export/copy cookies dalam format **STRING**
 5. Pastikan setiap object memiliki field `cookieHeader` atau bisa juga menggunakan `shopeeEmail` + `shopeePassword` untuk login otomatis (opsional, tapi lebih stabil)
 
@@ -173,7 +173,7 @@ Sesuai dokumentasi resmi Actor `gio21/shopee-scraper-with-apify - fmKWN5uByUCIy2
 ```
 
 > ⚠️ Berbeda dengan API internal Shopee yang mengalikan harga × 100.000.
-> Actor ini sudah melakukan konversi kode — asalkan tetapkan kode **ID** pada object input, tinggal pakai langsung.
+> Actor ini sudah melakukan konversi kode — asalkan tetapkan kode **ID** pada object input, tinggal pakai.
 
 ---
 
@@ -220,7 +220,7 @@ railway.app → New Project → Deploy from GitHub → auto-detect Node.js
 
 ```json
 {
-  "keyword": "Compressor",
+  "keyword": "Tênis",
   "apiKey": "apify_api_XXXXXXXXXXXX"
 }
 ```
@@ -297,4 +297,4 @@ shopee-scraper-with-apify/
 
 **Tantangan:** (1) Shopee punya anti-bot sangat ketat (Cloudflare + CAPTCHA + headless detection) — diselesaikan dengan mendelegasikan scraping ke Apify yang menggunakan residential proxy dan session rotation. (2) Format cookie Actor harus berupa JSON array of objects (bukan string header biasa) — perlu parsing dan validasi di backend. (3) harga sudah dalam Rupiah di field `price` (tidak perlu dibagi 100.000).
 
----
+
