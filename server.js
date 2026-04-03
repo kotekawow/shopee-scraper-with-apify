@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 // ─────────────────────────────────────────────────────────────────
-// Shopee Scraper — menggunakan Apify Actor gio21/shopee-scraper
+// Shopee Scraper — menggunakan Apify Actor ...
 const SHOPEE_COOKIE_STRING = process.env.SHOPEE_COOKIE_STRING || "";
 
 app.post("/api/scrape", async (req, res) => {
@@ -23,15 +23,9 @@ app.post("/api/scrape", async (req, res) => {
 
   try {
     // ── Step 1: Inisialisasi ApifyClient dengan API token ────────────────────
-    // Dapatkan API token di: https://console.apify.com → Settings → Integrations
-    //
-    //   const client = new ApifyClient({ token: '<YOUR_API_TOKEN>' });
-    //
     const client = new ApifyClient({ token: apiKey });
 
     // ── Step 2: Siapkan input Actor ──────────────────────────────────────────
-    // Input sesuai dokumentasi resmi Actor gio21/shopee-scraper:
-    // Prepare Actor input, pilih shopeeEmail & shopeePassword atau alternatif menggunakan cookieHeader saja
     const input = {
       location: keyword,
       country: "ID",
@@ -42,11 +36,6 @@ app.post("/api/scrape", async (req, res) => {
     };
 
     // ── Step 3: Jalankan Actor dan tunggu selesai ────────────────────────────
-    // .call(input) menjalankan Actor secara async — menunggu hingga status
-    // SUCCEEDED sebelum melanjutkan. Return value adalah objek run Apify.
-    //
-    //   const run = await client.actor("ActorId").call(input);
-    //
     const run = await client.actor("fmKWN5uByUCIy2Sam").call(input);
 
     // ── Step 4: Ambil hasil dari dataset run ─────────────────────────────────
@@ -74,7 +63,7 @@ app.post("/api/scrape", async (req, res) => {
           name: item.name,
           price: item.price,
           priceFormatted: formatRupiah(item.price),
-          link: item.url, // field "url" sesuai output docs resmi
+          link: item.url,
           image: buildImageUrl(item.image),
           rating: item.rating ?? null,
           sold: item.sold ?? null,
