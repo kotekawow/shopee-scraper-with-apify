@@ -24,7 +24,7 @@ Dibangun dengan Node.js + Express, menggunakan **Apify Client SDK** untuk memang
 ## 📦 Instalasi Lokal
 
 ```bash
-git clone https://github.com/username/shopee-scraper-with-apify.git
+git clone https://github.com/username/shopee-scrapper-with-apify.git
 cd shopee-scraper-with-apify
 npm install
 npm start
@@ -185,7 +185,7 @@ Sesuai dokumentasi resmi Actor `gio21/shopee-scraper-with-apify - fmKWN5uByUCIy2
 git init
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/username/shopee-scraper-with-apify.git
+git remote add origin https://github.com/username/shopee-scrapper-with-apify.git
 git push -u origin main
 ```
 
