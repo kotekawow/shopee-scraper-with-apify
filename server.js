@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const cors = require("cors");
 const path = require("path");
 const { ApifyClient } = require("apify-client");
@@ -13,6 +14,19 @@ app.use(express.static(path.join(__dirname, "public")));
 // ─────────────────────────────────────────────────────────────────
 // Shopee Scraper — menggunakan Apify Actor gio21/shopee-scraper
 const SHOPEE_COOKIE_STRING = process.env.SHOPEE_COOKIE_STRING || "";
+console.log("[Debug] cookies string: ", SHOPEE_COOKIE_STRING);
+
+function convertCookies(cookieString, domain = ".shopee.co.id", path = "/") {
+  return SHOPEE_COOKIE_STRING.split(";")
+    .map((cookie) => cookie.trim())
+    .filter((cookie) => cookie.length > 0)
+    .map((cookie) => {
+      const separatorIndex = cookie.indexOf("=");
+      const name = cookie.substring(0, separatorIndex).trim();
+      const value = cookie.substring(separatorIndex + 1).trim();
+      return { name, value, domain, path };
+    });
+}
 
 app.post("/api/scrape", async (req, res) => {
   const { keyword, apiKey } = req.body;
@@ -28,34 +42,46 @@ app.post("/api/scrape", async (req, res) => {
     //   const client = new ApifyClient({ token: '<YOUR_API_TOKEN>' });
     //
     const client = new ApifyClient({ token: apiKey });
-
+    
     // ── Step 2: Siapkan input Actor ──────────────────────────────────────────
     // Input sesuai dokumentasi resmi Actor gio21/shopee-scraper:
     // Prepare Actor input, pilih shopeeEmail & shopeePassword atau alternatif menggunakan cookieHeader saja
+    const result = convertCookies(SHOPEE_COOKIE_STRING, ".shopee.co.id", "/");
+    const shopeeCookiesStr = JSON.stringify(result);
+    console.log("[Debug] result func convertCookies: ", shopeeCookiesStr);
+
+    console.log("[Debug] shopeeCookies length:", shopeeCookiesStr.length);
+    console.log("[Debug] shopeeCookies preview:", shopeeCookiesStr.substring(0, 200));
+    console.log("[Debug] SHOPEE_COOKIE_STRING length:", SHOPEE_COOKIE_STRING.length);
+
     const input = {
-      location: keyword,
+      searchKeywords: [keyword],
       country: "ID",
-      maxItems: 50,
-      shopeeEmail: "",
-      shopeePassword: "",
+      scrapeMode: "fast",
+      maxProductsPerSearch: 20,
+      sortBy: "relevancy",
       cookieHeader: SHOPEE_COOKIE_STRING,
+      shopeeCookies: shopeeCookiesStr,
     };
+
+    console.log("[Debug] Full input:", JSON.stringify(input, null, 2));
 
     // ── Step 3: Jalankan Actor dan tunggu selesai ────────────────────────────
     // .call(input) menjalankan Actor secara async — menunggu hingga status
     // SUCCEEDED sebelum melanjutkan. Return value adalah objek run Apify.
     //
-    //   const run = await client.actor("ActorId").call(input);
+    //   example: const run = await client.actor("ActorId").call(input);
     //
-    const run = await client.actor("fmKWN5uByUCIy2Sam").call(input);
+    const run = await client.actor("vlSIMF6GxwbFAIQ77").call(input);
 
     // ── Step 4: Ambil hasil dari dataset run ─────────────────────────────────
     const { items } = await client.dataset(run.defaultDatasetId).listItems();
 
     // Log untuk debugging — lihat struktur data asli dari Actor
-    console.log("[Apify] Total items:", items.length);
     if (items.length > 0) {
-      console.log("[Apify] Sample item:", JSON.stringify(items[0], null, 2));
+      // console.log("[Apify] Sample item:", JSON.stringify(items[0], null, 2));
+      console.log("[Apify] Count items:", items.length);
+      console.log("[Apify] Detail items:", items);
     }
 
     if (!items || items.length === 0) {
